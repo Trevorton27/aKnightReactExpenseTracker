@@ -2,50 +2,45 @@ import React from 'react';
 
 function Form(props) {
   return (
-    <form onSubmit={props.handleSubmit}>
+    <form onSubmit={props.onSubmit}>
       <div>
-        <label htmlFor="expenseLocation">
+        <label>
           Enter the location of expense:
           <input
-            id="expenseLocation"
             type="text"
-            value={props.value}
-            onChange={props.handleChange}
+            name="expenseLocation"
+            onChange={props.onChange}
           ></input>
         </label>
       </div>
       <div>
-        <label htmlFor="expenseDescription">
+        <label>
           Enter a description of expense:
           <input
-            id="expenseDescription"
             type="text"
-            value={props.value}
-            onChange={props.handleChange}
+            name="expenseDescription"
+            onChange={props.onChange}
           ></input>
         </label>
       </div>
       <div>
-        <label htmlFor="expenseCost">
+        <label>
           Enter the cost of expense:
           <input
-            id="expenseCost"
             type="number"
             step="0.01"
-            value={props.value}
-            onChange={props.handleChange}
+            name="expenseCost"
+            onChange={props.onChange}
           ></input>
         </label>
       </div>
       <div>
-        k
-        <label htmlFor="expenseDate">
+        <label>
           Enter the date of purchase:
           <input
-            id="expenseDate"
             type="date"
-            value={props.value}
-            onChange={props.handleChange}
+            name="expenseDate"
+            // onChange={props.handleInputChange}
           ></input>
         </label>
       </div>
