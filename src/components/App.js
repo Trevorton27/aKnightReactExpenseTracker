@@ -4,9 +4,24 @@ import Form from './Form';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    // unique key identifier
+    let uniqueIdentifier = 1;
+    // setting the current date for expenseDate
+    let date = new Date();
+    date.setDate(date.getDate());
+    let currentDate = date.toISOString().substr(0, 10);
+
     this.state = {
       expenseLocation: '',
-      expenseTag: [],
+      expenseDescription: '',
+      expenseCost: 0,
+      expenseDate: currentDate,
+      storeExpenses: [
+        { key: 1, location: [] },
+        { key: 2, description: [] },
+        { key: 3, cost: [] },
+        { key: 4, date: [] },
+      ],
     };
 
     // I forgot to add bind here....
@@ -22,34 +37,84 @@ class App extends React.Component {
           ...previousState,
           expenseLocation: value,
         };
+      } else if (name === 'expenseDescription') {
+        return {
+          ...previousState,
+          expenseDescription: value,
+        };
+      } else if (name === 'expenseCost') {
+        return {
+          ...previousState,
+          expenseCost: value,
+        };
+      } else if (name === 'expenseDate') {
+        return {
+          ...previousState,
+          expenseDate: value,
+        };
       }
     });
-    console.log(name);
-    console.log(value);
+    // console.log(name);
+    // console.log(value);
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const value = this.state.expenseLocation;
+    // code below will probably need refactoring
+    const currentState = this.state;
 
     this.setState((previousState) => {
-      const newState = { ...previousState };
-      newState.expenseTag.push(value);
-      return newState;
+      const updateState = { ...previousState };
+      updateState.storeExpenses[0].location.push(currentState.expenseLocation);
+      updateState.storeExpenses[1].description.push(
+        currentState.expenseDescription
+      );
+      updateState.storeExpenses[2].cost.push(currentState.expenseCost);
+      updateState.storeExpenses[3].date.push(currentState.expenseDate);
+      console.log(updateState);
+      return updateState;
     });
+  }
+
+  insertExpenseRows(index) {
+    const storeExpensesObject = this.state.storeExpenses;
+    return (
+      <tr>
+        <td>{storeExpensesObject[0].location[index]}</td>
+        <td>{storeExpensesObject[1].description[index]}</td>
+        <td>{storeExpensesObject[2].cost[index]}</td>
+        <td>{storeExpensesObject[3].date[index]}</td>
+      </tr>
+    );
+  }
+
+  generateExpenseRows() {
+    const storeExpensesObject = this.state.storeExpenses;
+    const arrayLength = storeExpensesObject[0].location.length;
+
+    for (let i = 0; i < arrayLength; i++) {
+      this.insertExpenseRows(i);
+    }
   }
 
   // What do I want to do? When I enter information in the input field, I want to display the result of what I entered in a paragraph tag
   render() {
-    // needs a key, can be specified in a custom component
-    const expenseTags = this.state.expenseTag.map((text) => {
-      return <p>{text}</p>;
-    });
+    // const expenseTags = this.state.storeExpenses.map((text) => {
+    //   return <p>{text}</p>;
+    // });
 
     return (
       <div>
         <Form onChange={this.handleChange} onSubmit={this.handleSubmit} />
-        {expenseTags}
+        {/* {expenseTags} */}
+        <table>
+          <thead>
+            <tr>
+              <th>Sample Table</th>
+            </tr>
+          </thead>
+          <tbody>{this.generateExpenseRows()}</tbody>
+        </table>
       </div>
     );
   }
