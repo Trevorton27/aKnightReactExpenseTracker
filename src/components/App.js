@@ -5,7 +5,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     // unique key identifier
-    let uniqueIdentifier = 1;
+    this.uniqueIdentifier = 1;
     // setting the current date for expenseDate
     let date = new Date();
     date.setDate(date.getDate());
@@ -16,12 +16,7 @@ class App extends React.Component {
       expenseDescription: '',
       expenseCost: 0,
       expenseDate: currentDate,
-      storeExpenses: [
-        { key: 1, location: [] },
-        { key: 2, description: [] },
-        { key: 3, cost: [] },
-        { key: 4, date: [] },
-      ],
+      expenseTable: [],
     };
 
     // I forgot to add bind here....
@@ -60,44 +55,38 @@ class App extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    // code below will probably need refactoring
-    const currentState = this.state;
+    this.uniqueIdentifier++;
 
+    const { expenseLocation, expenseDescription, expenseCost, expenseDate } =
+      this.state;
     this.setState((previousState) => {
-      const updateState = { ...previousState };
-      updateState.storeExpenses[0].location.push(currentState.expenseLocation);
-      updateState.storeExpenses[1].description.push(
-        currentState.expenseDescription
-      );
-      updateState.storeExpenses[2].cost.push(currentState.expenseCost);
-      updateState.storeExpenses[3].date.push(currentState.expenseDate);
-      console.log(updateState);
-      return updateState;
+      const modifiedState = { ...previousState };
+      modifiedState.expenseTable.push({
+        id: this.uniqueIdentifier,
+        location: expenseLocation,
+        description: expenseDescription,
+        cost: expenseCost,
+        date: expenseDate,
+      });
+      return modifiedState;
     });
   }
 
-  insertExpenseRows(index) {
-    const storeExpensesObject = this.state.storeExpenses;
-    return (
-      <tr>
-        <td>{storeExpensesObject[0].location[index]}</td>
-        <td>{storeExpensesObject[1].description[index]}</td>
-        <td>{storeExpensesObject[2].cost[index]}</td>
-        <td>{storeExpensesObject[3].date[index]}</td>
-      </tr>
-    );
+  renderTableData() {
+    const renderExpenseRows = this.state.expenseTable.map((expenseRow) => {
+      const { id, location, description, cost, date } = expenseRow;
+      return (
+        <tr key={id}>
+          <td>{location}</td>
+          <td>{description}</td>
+          <td>{cost}</td>
+          <td>{date}</td>
+        </tr>
+      );
+    });
+    return renderExpenseRows;
   }
 
-  generateExpenseRows() {
-    const storeExpensesObject = this.state.storeExpenses;
-    const arrayLength = storeExpensesObject[0].location.length;
-
-    for (let i = 0; i < arrayLength; i++) {
-      this.insertExpenseRows(i);
-    }
-  }
-
-  // What do I want to do? When I enter information in the input field, I want to display the result of what I entered in a paragraph tag
   render() {
     // const expenseTags = this.state.storeExpenses.map((text) => {
     //   return <p>{text}</p>;
@@ -110,10 +99,10 @@ class App extends React.Component {
         <table>
           <thead>
             <tr>
-              <th>Sample Table</th>
+              <th colSpan="4">Sample Table</th>
             </tr>
           </thead>
-          <tbody>{this.generateExpenseRows()}</tbody>
+          <tbody>{this.renderTableData()}</tbody>
         </table>
       </div>
     );

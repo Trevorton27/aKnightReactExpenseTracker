@@ -21,14 +21,3 @@ function Table(props) {
 }
 
 export default Table;
-
-// function Table(props) {
-//   const row = props.expenseDescription.map((expense) => {
-//     return <td>{expense}</td>;
-//   });
-//   return (
-//     <div>
-//       <tr>{row}</tr>
-//     </div>
-//   );
-// }
