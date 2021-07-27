@@ -1,12 +1,12 @@
 import React from 'react';
 import Form from './Form';
+import Table from './Table';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     // unique key identifier
     this.uniqueIdentifier = 1;
-    // setting the current date for expenseDate
     let date = new Date();
     date.setDate(date.getDate());
     let currentDate = date.toISOString().substr(0, 10);
@@ -49,8 +49,6 @@ class App extends React.Component {
         };
       }
     });
-    // console.log(name);
-    // console.log(value);
   }
 
   handleSubmit(e) {
@@ -79,7 +77,7 @@ class App extends React.Component {
         <tr key={id}>
           <td>{location}</td>
           <td>{description}</td>
-          <td>{cost}</td>
+          <td>${cost}</td>
           <td>{date}</td>
         </tr>
       );
@@ -88,22 +86,10 @@ class App extends React.Component {
   }
 
   render() {
-    // const expenseTags = this.state.storeExpenses.map((text) => {
-    //   return <p>{text}</p>;
-    // });
-
     return (
       <div>
         <Form onChange={this.handleChange} onSubmit={this.handleSubmit} />
-        {/* {expenseTags} */}
-        <table>
-          <thead>
-            <tr>
-              <th colSpan="4">Sample Table</th>
-            </tr>
-          </thead>
-          <tbody>{this.renderTableData()}</tbody>
-        </table>
+        <Table renderTableData={this.renderTableData()} />
       </div>
     );
   }
@@ -111,24 +97,11 @@ class App extends React.Component {
 
 export default App;
 
-// function App() {
-//   // current date
-//   // const date = new Date();
-//   // date.setDate(date.getDate());
-//   // const currentDate = date.toISOString().substr(0, 10);
-
-//   const [expenseDescription, setExpenseDescription] = useState([]);
-//   const [inputValue, setInputValue] = useState('');
-
-//   function handleSubmit(event) {
-//     event.preventDefault();
-
-//     const newExpenseDescription = [...expenseDescription, inputValue];
-//     setExpenseDescription(newExpenseDescription);
-//     console.log(newExpenseDescription);
-//   }
-
-//   function handleChange(event) {
-//     console.log(event.target.value);
-//     setInputValue(event.target.value);
-//   }
+/* <table>
+          <thead>
+            <tr>
+              <th colSpan="4">Sample Table</th>
+            </tr>
+          </thead>
+          <tbody>{this.renderTableData()}</tbody>
+        </table> */

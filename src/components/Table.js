@@ -14,7 +14,7 @@ function Table(props) {
           <th>Date</th>
         </tr>
       </thead>
-      <tbody>{/* Will I insert the generated rows here? */}</tbody>
+      <tbody>{props.renderTableData}</tbody>
       <tfoot>{/* Insert total cost here? */}</tfoot>
     </table>
   );
