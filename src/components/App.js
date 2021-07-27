@@ -6,7 +6,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     // unique key identifier
-    this.uniqueIdentifier = 1;
+    this.uniqueIdentifier = 0;
     let date = new Date();
     date.setDate(date.getDate());
     let currentDate = date.toISOString().substr(0, 10);
@@ -70,15 +70,45 @@ class App extends React.Component {
     });
   }
 
+  handleRemove(id) {
+    this.setState((previousState) => {
+      const filteredExpenseTable = previousState.expenseTable.filter(
+        (expenseObject) => {
+          return expenseObject.id !== id;
+        }
+      );
+      const modifiedState = {
+        ...previousState,
+        expenseTable: filteredExpenseTable,
+      };
+      return modifiedState;
+    });
+  }
+
+  reformatDate(date) {
+    const dateArray = date.split('-');
+    let dateDay = parseInt(dateArray[2], 10); // Removes leading zero if number is less than 10
+    const dateMonth = parseInt(dateArray[1], 10);
+    const dateYear = dateArray[0];
+
+    const reformattedDate = `${dateMonth}.${dateDay}.${dateYear}`;
+    return reformattedDate;
+  }
+
   renderTableData() {
-    const renderExpenseRows = this.state.expenseTable.map((expenseRow) => {
-      const { id, location, description, cost, date } = expenseRow;
+    const renderExpenseRows = this.state.expenseTable.map((expenseObject) => {
+      const { id, location, description, cost, date } = expenseObject;
       return (
         <tr key={id}>
           <td>{location}</td>
           <td>{description}</td>
           <td>${cost}</td>
-          <td>{date}</td>
+          <td>{this.reformatDate(date)}</td>
+          <td>
+            <button type="button" onClick={() => this.handleRemove(id)}>
+              remove
+            </button>
+          </td>
         </tr>
       );
     });
@@ -88,6 +118,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
+        <h1>Expense Tracker React</h1>
         <Form onChange={this.handleChange} onSubmit={this.handleSubmit} />
         <Table renderTableData={this.renderTableData()} />
       </div>
@@ -96,12 +127,3 @@ class App extends React.Component {
 }
 
 export default App;
-
-/* <table>
-          <thead>
-            <tr>
-              <th colSpan="4">Sample Table</th>
-            </tr>
-          </thead>
-          <tbody>{this.renderTableData()}</tbody>
-        </table> */

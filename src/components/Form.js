@@ -40,7 +40,7 @@ function Form(props) {
           <input
             type="date"
             name="expenseDate"
-            // onChange={props.handleInputChange}
+            onChange={props.onChange}
           ></input>
         </label>
       </div>
