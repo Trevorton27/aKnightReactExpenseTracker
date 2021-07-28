@@ -1,8 +1,9 @@
 import React from 'react';
+import Table from 'react-bootstrap/Table';
 
-function Table(props) {
+function TableComponent(props) {
   return (
-    <table>
+    <Table striped bordered hover>
       <thead>
         <tr>
           <th colSpan="4">Expense Tracker Table</th>
@@ -15,9 +16,8 @@ function Table(props) {
         </tr>
       </thead>
       <tbody>{props.renderTableData}</tbody>
-      <tfoot>{/* Insert total cost here? */}</tfoot>
-    </table>
+    </Table>
   );
 }
 
-export default Table;
+export default TableComponent;

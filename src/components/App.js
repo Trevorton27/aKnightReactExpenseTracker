@@ -1,6 +1,9 @@
 import React from 'react';
-import Form from './Form';
-import Table from './Table';
+import FormComponent from './FormComponent';
+import TableComponent from './TableComponent';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 
 class App extends React.Component {
   constructor(props) {
@@ -105,9 +108,13 @@ class App extends React.Component {
           <td>${cost}</td>
           <td>{this.reformatDate(date)}</td>
           <td>
-            <button type="button" onClick={() => this.handleRemove(id)}>
+            <Button
+              variant="danger"
+              type="button"
+              onClick={() => this.handleRemove(id)}
+            >
               remove
-            </button>
+            </Button>
           </td>
         </tr>
       );
@@ -117,11 +124,16 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <Container>
         <h1>Expense Tracker React</h1>
-        <Form onChange={this.handleChange} onSubmit={this.handleSubmit} />
-        <Table renderTableData={this.renderTableData()} />
-      </div>
+
+        <FormComponent
+          onChange={this.handleChange}
+          onSubmit={this.handleSubmit}
+        />
+        <br />
+        <TableComponent renderTableData={this.renderTableData()} />
+      </Container>
     );
   }
 }
