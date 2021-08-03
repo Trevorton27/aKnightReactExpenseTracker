@@ -8,7 +8,6 @@ import Container from 'react-bootstrap/Container';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    // unique key identifier
     this.uniqueIdentifier = 0;
     let date = new Date();
     date.setDate(date.getDate());
@@ -20,11 +19,24 @@ class App extends React.Component {
       expenseCost: 0,
       expenseDate: currentDate,
       expenseTable: [],
+      // adding local storage here
+      // expenseStorage: [],
     };
 
     // I forgot to add bind here....
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  //componentDidMount()
+  componentDidMount() {
+    // const currentLocalStorage = localStorage.getItem();
+    // console.log(currentLocalStorage);
+    // this.setState((previousState) => {
+    //   return {
+    //     ...previousState,
+    //     expenseTable: [currentLocalStorage],
+    //   };
+    // });
   }
 
   handleChange(e) {
@@ -71,6 +83,17 @@ class App extends React.Component {
       });
       return modifiedState;
     });
+
+    // adding expense to local storage
+    localStorage.setItem(
+      `key${this.uniqueIdentifier}`,
+      JSON.stringify({
+        location: expenseLocation,
+        description: expenseDescription,
+        cost: expenseCost,
+        date: expenseDate,
+      })
+    );
   }
 
   handleRemove(id) {
@@ -86,6 +109,9 @@ class App extends React.Component {
       };
       return modifiedState;
     });
+
+    // removing expense from local storage
+    localStorage.removeItem(`key${id}`);
   }
 
   reformatDate(date) {
@@ -131,7 +157,7 @@ class App extends React.Component {
           onChange={this.handleChange}
           onSubmit={this.handleSubmit}
         />
-        <br />
+
         <TableComponent renderTableData={this.renderTableData()} />
       </Container>
     );
