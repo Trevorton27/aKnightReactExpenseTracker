@@ -9,7 +9,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.uniqueIdentifier = 0;
-    // this.localStorageExpenseArray = []; // this is an array of objects each with a unique key for each object
     let date = new Date();
     date.setDate(date.getDate());
     let currentDate = date.toISOString().substr(0, 10);
@@ -25,18 +24,6 @@ class App extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  // componentDidMount() {
-  //   this.uniqueIdentifier = localStorage.getItem('uniqueIdentifier') || 0;
-  //   this.localStorageExpenseArray =
-  //     JSON.parse(localStorage.getItem('expenseArray')) || [];
-  //   this.setState((prevState) => {
-  //     return {
-  //       ...prevState,
-  //       expenseTable: this.localStorageExpenseArray,
-  //     };
-  //   });
-  // }
-
   componentDidMount() {
     this.uniqueIdentifier = localStorage.getItem('count') || 0;
     const expenseLocalStorage =
@@ -48,24 +35,6 @@ class App extends React.Component {
       };
     });
   }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   // when an expense is added
-  //   const previousState = Object.assign({}, prevState);
-  //   const currentState = Object.assign({}, this.state);
-  //   if (previousState.expenseTable.length < currentState.expenseTable.length) {
-  //     localStorage.setItem(
-  //       'expenseLocalStorage',
-  //       JSON.stringify(currentState.expenseTable)
-  //     );
-  //   }
-  //   console.log(previousState);
-  //   console.log(currentState);
-  //   // if (previousState[expensTa])
-  //   // if ((prevState.expenseTable.length) < (this.state.expenseTable.length)) {
-  //   console.log(localStorage);
-  //   // }
-  // }
 
   handleChange(e) {
     const { name, value } = e.target;
@@ -120,25 +89,6 @@ class App extends React.Component {
         localStorage.setItem('count', this.uniqueIdentifier);
       }
     );
-
-    // local storage
-    // this.localStorageExpenseArray.push({
-    //   id: this.uniqueIdentifier,
-    //   location: expenseLocation,
-    //   description: expenseDescription,
-    //   cost: expenseCost,
-    //   date: expenseDate,
-    // });
-    // localStorage.setItem(
-    //   `expenseLocalStorage`,
-    //   JSON.stringify(this.state.expenseTable) // gets previous version of expense table, lags by 1
-    // );
-    // console.log(this.localStorageExpenseArray);
-    // localStorage.setItem(
-    //   'expenseArray',
-    //   JSON.stringify(this.localStorageExpenseArray)
-    // );
-    // localStorage.setItem('uniqueIdentifier', this.uniqueIdentifier);
   }
 
   handleRemove(id) {
@@ -162,23 +112,11 @@ class App extends React.Component {
         );
       }
     );
-
-    //Local storage
-    // const filteredLocalStorageExpenseArray =
-    //   this.localStorageExpenseArray.filter((localStorageExpense) => {
-    //     return localStorageExpense.id !== id; // remove the particular object based on the id selected
-    //   });
-    // // update localStorage with setItem
-    // localStorage.setItem(
-    //   'expenseArray',
-    //   JSON.stringify(filteredLocalStorageExpenseArray)
-    // );
-    // // localStorage.removeItem(`key${id}`);
   }
 
   reformatDate(date) {
     const dateArray = date.split('-');
-    let dateDay = parseInt(dateArray[2], 10); // Removes leading zero if number is less than 10
+    let dateDay = parseInt(dateArray[2], 10);
     const dateMonth = parseInt(dateArray[1], 10);
     const dateYear = dateArray[0];
 
