@@ -9,6 +9,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.uniqueIdentifier = 0;
+    // this.localStorageExpenseArray = []; // this is an array of objects each with a unique key for each object
     let date = new Date();
     date.setDate(date.getDate());
     let currentDate = date.toISOString().substr(0, 10);
@@ -19,47 +20,74 @@ class App extends React.Component {
       expenseCost: 0,
       expenseDate: currentDate,
       expenseTable: [],
-      // adding local storage here
-      // expenseStorage: [],
     };
-
-    // I forgot to add bind here....
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  //componentDidMount()
+
+  // componentDidMount() {
+  //   this.uniqueIdentifier = localStorage.getItem('uniqueIdentifier') || 0;
+  //   this.localStorageExpenseArray =
+  //     JSON.parse(localStorage.getItem('expenseArray')) || [];
+  //   this.setState((prevState) => {
+  //     return {
+  //       ...prevState,
+  //       expenseTable: this.localStorageExpenseArray,
+  //     };
+  //   });
+  // }
+
   componentDidMount() {
-    // const currentLocalStorage = localStorage.getItem();
-    // console.log(currentLocalStorage);
-    // this.setState((previousState) => {
-    //   return {
-    //     ...previousState,
-    //     expenseTable: [currentLocalStorage],
-    //   };
-    // });
+    this.uniqueIdentifier = localStorage.getItem('count') || 0;
+    const expenseLocalStorage =
+      JSON.parse(localStorage.getItem('expenseLocalStorage')) || [];
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        expenseTable: expenseLocalStorage,
+      };
+    });
   }
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   // when an expense is added
+  //   const previousState = Object.assign({}, prevState);
+  //   const currentState = Object.assign({}, this.state);
+  //   if (previousState.expenseTable.length < currentState.expenseTable.length) {
+  //     localStorage.setItem(
+  //       'expenseLocalStorage',
+  //       JSON.stringify(currentState.expenseTable)
+  //     );
+  //   }
+  //   console.log(previousState);
+  //   console.log(currentState);
+  //   // if (previousState[expensTa])
+  //   // if ((prevState.expenseTable.length) < (this.state.expenseTable.length)) {
+  //   console.log(localStorage);
+  //   // }
+  // }
 
   handleChange(e) {
     const { name, value } = e.target;
-    this.setState((previousState) => {
+    this.setState((prevState) => {
       if (name === 'expenseLocation') {
         return {
-          ...previousState,
+          ...prevState,
           expenseLocation: value,
         };
       } else if (name === 'expenseDescription') {
         return {
-          ...previousState,
+          ...prevState,
           expenseDescription: value,
         };
       } else if (name === 'expenseCost') {
         return {
-          ...previousState,
+          ...prevState,
           expenseCost: value,
         };
       } else if (name === 'expenseDate') {
         return {
-          ...previousState,
+          ...prevState,
           expenseDate: value,
         };
       }
@@ -72,46 +100,80 @@ class App extends React.Component {
 
     const { expenseLocation, expenseDescription, expenseCost, expenseDate } =
       this.state;
-    this.setState((previousState) => {
-      const modifiedState = { ...previousState };
-      modifiedState.expenseTable.push({
-        id: this.uniqueIdentifier,
-        location: expenseLocation,
-        description: expenseDescription,
-        cost: expenseCost,
-        date: expenseDate,
-      });
-      return modifiedState;
-    });
-
-    // adding expense to local storage
-    localStorage.setItem(
-      `key${this.uniqueIdentifier}`,
-      JSON.stringify({
-        location: expenseLocation,
-        description: expenseDescription,
-        cost: expenseCost,
-        date: expenseDate,
-      })
+    this.setState(
+      (prevState) => {
+        const modifiedState = { ...prevState };
+        modifiedState.expenseTable.push({
+          id: this.uniqueIdentifier,
+          location: expenseLocation,
+          description: expenseDescription,
+          cost: expenseCost,
+          date: expenseDate,
+        });
+        return modifiedState;
+      },
+      () => {
+        localStorage.setItem(
+          'expenseLocalStorage',
+          JSON.stringify(this.state.expenseTable)
+        );
+        localStorage.setItem('count', this.uniqueIdentifier);
+      }
     );
+
+    // local storage
+    // this.localStorageExpenseArray.push({
+    //   id: this.uniqueIdentifier,
+    //   location: expenseLocation,
+    //   description: expenseDescription,
+    //   cost: expenseCost,
+    //   date: expenseDate,
+    // });
+    // localStorage.setItem(
+    //   `expenseLocalStorage`,
+    //   JSON.stringify(this.state.expenseTable) // gets previous version of expense table, lags by 1
+    // );
+    // console.log(this.localStorageExpenseArray);
+    // localStorage.setItem(
+    //   'expenseArray',
+    //   JSON.stringify(this.localStorageExpenseArray)
+    // );
+    // localStorage.setItem('uniqueIdentifier', this.uniqueIdentifier);
   }
 
   handleRemove(id) {
-    this.setState((previousState) => {
-      const filteredExpenseTable = previousState.expenseTable.filter(
-        (expenseObject) => {
-          return expenseObject.id !== id;
-        }
-      );
-      const modifiedState = {
-        ...previousState,
-        expenseTable: filteredExpenseTable,
-      };
-      return modifiedState;
-    });
+    this.setState(
+      (prevState) => {
+        const filteredExpenseTable = prevState.expenseTable.filter(
+          (expenseObject) => {
+            return expenseObject.id !== id;
+          }
+        );
+        const modifiedState = {
+          ...prevState,
+          expenseTable: filteredExpenseTable,
+        };
+        return modifiedState;
+      },
+      () => {
+        localStorage.setItem(
+          'expenseLocalStorage',
+          JSON.stringify(this.state.expenseTable)
+        );
+      }
+    );
 
-    // removing expense from local storage
-    localStorage.removeItem(`key${id}`);
+    //Local storage
+    // const filteredLocalStorageExpenseArray =
+    //   this.localStorageExpenseArray.filter((localStorageExpense) => {
+    //     return localStorageExpense.id !== id; // remove the particular object based on the id selected
+    //   });
+    // // update localStorage with setItem
+    // localStorage.setItem(
+    //   'expenseArray',
+    //   JSON.stringify(filteredLocalStorageExpenseArray)
+    // );
+    // // localStorage.removeItem(`key${id}`);
   }
 
   reformatDate(date) {
