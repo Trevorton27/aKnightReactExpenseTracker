@@ -2,116 +2,78 @@ import React from 'react';
 import FormComponent from './FormComponent';
 import TableComponent from './TableComponent';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.uniqueIdentifier = 0;
-    let date = new Date();
-    date.setDate(date.getDate());
-    let currentDate = date.toISOString().substr(0, 10);
 
     this.state = {
       expenseLocation: '',
       expenseDescription: '',
       expenseCost: 0,
-      expenseDate: currentDate,
-      expenseTable: [],
+      expenseDate: '',
+      expenseTable: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
   }
 
   componentDidMount() {
-    this.uniqueIdentifier = localStorage.getItem('count') || 0;
     const expenseLocalStorage =
       JSON.parse(localStorage.getItem('expenseLocalStorage')) || [];
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        expenseTable: expenseLocalStorage,
-      };
+    this.setState({
+      expenseTable: expenseLocalStorage
     });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.expenseTable !== prevState.expenseTable.length) {
+      localStorage.setItem(
+        'expenseLocalStorage',
+        JSON.stringify(this.state.expenseTable)
+      );
+    }
   }
 
   handleChange(e) {
     const { name, value } = e.target;
-    this.setState((prevState) => {
-      if (name === 'expenseLocation') {
-        return {
-          ...prevState,
-          expenseLocation: value,
-        };
-      } else if (name === 'expenseDescription') {
-        return {
-          ...prevState,
-          expenseDescription: value,
-        };
-      } else if (name === 'expenseCost') {
-        return {
-          ...prevState,
-          expenseCost: value,
-        };
-      } else if (name === 'expenseDate') {
-        return {
-          ...prevState,
-          expenseDate: value,
-        };
-      }
+    console.log('name: ', name, 'value: ', value);
+    this.setState({
+      [name]: value
     });
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    this.uniqueIdentifier++;
 
     const { expenseLocation, expenseDescription, expenseCost, expenseDate } =
       this.state;
-    this.setState(
-      (prevState) => {
-        const modifiedState = { ...prevState };
-        modifiedState.expenseTable.push({
-          id: this.uniqueIdentifier,
-          location: expenseLocation,
-          description: expenseDescription,
-          cost: expenseCost,
-          date: expenseDate,
-        });
-        return modifiedState;
-      },
-      () => {
-        localStorage.setItem(
-          'expenseLocalStorage',
-          JSON.stringify(this.state.expenseTable)
-        );
-        localStorage.setItem('count', this.uniqueIdentifier);
-      }
-    );
+    const expenseItem = {
+      id: Date.now(),
+      location: expenseLocation,
+      description: expenseDescription,
+      cost: expenseCost,
+      date: expenseDate
+    };
+
+    this.setState({
+      expenseTable: [...this.state.expenseTable, expenseItem],
+      expenseLocation: '',
+      expenseDescription: '',
+      expenseCost: 0,
+      expenseDate: ''
+    });
   }
 
   handleRemove(id) {
-    this.setState(
-      (prevState) => {
-        const filteredExpenseTable = prevState.expenseTable.filter(
-          (expenseObject) => {
-            return expenseObject.id !== id;
-          }
-        );
-        const modifiedState = {
-          ...prevState,
-          expenseTable: filteredExpenseTable,
-        };
-        return modifiedState;
-      },
-      () => {
-        localStorage.setItem(
-          'expenseLocalStorage',
-          JSON.stringify(this.state.expenseTable)
-        );
-      }
+    const removeRow = this.state.expenseTable.filter(
+      (expense) => expense.id !== id
     );
+    this.setState({
+      expenseTable: removeRow
+    });
   }
 
   reformatDate(date) {
@@ -124,41 +86,22 @@ class App extends React.Component {
     return reformattedDate;
   }
 
-  renderTableData() {
-    const renderExpenseRows = this.state.expenseTable.map((expenseObject) => {
-      const { id, location, description, cost, date } = expenseObject;
-      return (
-        <tr key={id}>
-          <td>{location}</td>
-          <td>{description}</td>
-          <td>${cost}</td>
-          <td>{this.reformatDate(date)}</td>
-          <td>
-            <Button
-              variant="danger"
-              type="button"
-              onClick={() => this.handleRemove(id)}
-            >
-              remove
-            </Button>
-          </td>
-        </tr>
-      );
-    });
-    return renderExpenseRows;
-  }
-
   render() {
     return (
       <Container>
         <h1>Expense Tracker React</h1>
 
         <FormComponent
+          state={this.state}
           onChange={this.handleChange}
           onSubmit={this.handleSubmit}
         />
 
-        <TableComponent renderTableData={this.renderTableData()} />
+        <TableComponent
+          state={this.state}
+          reformatDate={this.reformatDate}
+          handleRemove={this.handleRemove}
+        />
       </Container>
     );
   }
